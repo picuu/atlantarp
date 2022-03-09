@@ -16,6 +16,7 @@ module.exports = {
         // Welcome image
 
         registerFont("./fonts/AkiraExpanded.otf", { family: "Akira Expanded" })
+        registerFont("./fonts/BerlinSansFB.ttf", { family: "Berlin Sans FB" })
 
         const applyText = (canvas, text) => {
             const ctx = canvas.getContext('2d');
@@ -38,20 +39,23 @@ module.exports = {
 		ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
 
+        ctx.font = '18px "Berlin Sans FB"'
+        ctx.fillText("Bienvenido a Atlanta Roleplay, disfruta del rol!", 512, 345)
+
 		ctx.font = applyText(canvas, `${member.user.tag.toUpperCase()}`);
-		ctx.fillText(`${member.user.tag.toUpperCase()}`, 512, 410);
+		ctx.fillText(`${member.user.tag.toUpperCase()}`, 512, 400);
 
         ctx.beginPath();
-        ctx.arc(512, 166, 133, 0, Math.PI * 2, true);
+        ctx.arc(512, 176, 133, 0, Math.PI * 2, true);
         ctx.fill();
 
 		ctx.beginPath();
-		ctx.arc(512, 166, 121, 0, Math.PI * 2, true);
+		ctx.arc(512, 176, 121, 0, Math.PI * 2, true);
 		ctx.closePath();
 		ctx.clip();
 
         const avatar = await loadImage(member.user.displayAvatarURL({ format: 'png' }));
-		ctx.drawImage(avatar, 391, 45, 245, 245);
+		ctx.drawImage(avatar, 391, 55, 245, 245);
 
 
 		const attachment = new MessageAttachment(canvas.toBuffer(), 'welcome.png');
