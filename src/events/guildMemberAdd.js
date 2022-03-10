@@ -9,7 +9,7 @@ module.exports = {
 
         // Add role to new member
 
-        const memberRole = member.guild.roles.cache.find(role => role.name === "Member") || member.guild.roles.cache.find(role => role.id === "937060418432675881")
+        const memberRole = member.guild.roles.cache.find(role => role.name === "• Usuario") || member.guild.roles.cache.find(role => role.id === "930550538481844314")
         member.roles.add(memberRole.id)
 
 

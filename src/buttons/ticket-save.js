@@ -12,7 +12,7 @@ module.exports = {
 
     async run(client, interaction) {
 
-        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Only admins and staff can save tickets!", ephemeral: true });
+        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Solo los administradores y staff pueden guardar tickets!", ephemeral: true });
         
         let date = moment().format("YYMMDD");
 
@@ -27,12 +27,12 @@ module.exports = {
         if (data) {
             logsChannel = await interaction.guild.channels.cache.get(data.channelId)
 
-            logsChannel.send({ content: `**NEW TICKET LOG**\n${date}-${interaction.channel.name}`, files: [attachment] })
+            logsChannel.send({ content: `**NUEVO TICKET GUARDADO**\n${date}-${interaction.channel.name}`, files: [attachment] })
         }
 
         if (interaction.channel.deletable) {
             
-            interaction.reply({ content: "Ticket saved successfully! Deleting channel..."})
+            interaction.reply({ content: "El ticket se ha guardado con éxito! Eliminando canal..."})
 
             setTimeout(() => {
                 interaction.channel.delete()

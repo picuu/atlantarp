@@ -8,9 +8,9 @@ module.exports = {
 
     async run(client, interaction) {
 
-        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Only admins and staff can claim tickets!", ephemeral: true });
+        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Solo los administradores y staff pueden reclamar tickets!", ephemeral: true });
 
-        interaction.reply({ content: `<@${interaction.member.id}> claimed the ticket.`, allowedMentions: { repliedUser: false } })
+        interaction.reply({ content: `<@${interaction.member.id}> ha reclamado el ticket.`, allowedMentions: { repliedUser: false } })
     
     }
 }

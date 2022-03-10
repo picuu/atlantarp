@@ -9,19 +9,19 @@ module.exports = {
 
     async run(client, interaction) {
 
-        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Only admins and staff can delete tickets!", ephemeral: true });
+        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Solo los administradores y staff pueden eliminar tickets!", ephemeral: true });
         
         let logsChannel;
         let data = await ticketsLogsChannelModel.findOne({ guildId: interaction.member.guild.id })
         if (data) {
             logsChannel = await interaction.guild.channels.cache.get(data.channelId)
 
-            logsChannel.send({ content: `A ticket was created but not saved: \`\`${interaction.channel.name}\`\`` })
+            logsChannel.send({ content: `Se ha cerrado un ticket, pero no se ha guardado: \`\`${interaction.channel.name}\`\`` })
         }
         
         if (interaction.channel.deletable) {
             
-            interaction.reply({ content: "The ticket wasn't saved! Deleting channel..."})
+            interaction.reply({ content: "El ticket no se ha guardado. Eliminando canal..."})
     
             setTimeout(() => {
                 interaction.channel.delete()

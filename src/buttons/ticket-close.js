@@ -8,7 +8,7 @@ module.exports = {
 
     async run(client, interaction) {
 
-        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Only admins and staff can close tickets!", ephemeral: true });
+        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Solo los administradores y staff pueden cerrar tickets!", ephemeral: true });
         
         const confirm_buttons = new Discord.MessageActionRow()
             .addComponents(
@@ -16,26 +16,27 @@ module.exports = {
                     new Discord.MessageButton()
                         .setStyle("SUCCESS")
                         .setCustomId("ticket-save")
-                        .setLabel("Yes, save and delete it")
+                        .setLabel("Guárdalo")
                         .setEmoji("💾")
                 ],
                 [
                     new Discord.MessageButton()
                         .setStyle("DANGER")
                         .setCustomId("ticket-delete")
-                        .setLabel("Just delete it")
+                        .setLabel("No lo guardes")
                         .setEmoji("🗑️")
                 ],
                 [
                     new Discord.MessageButton()
                         .setStyle("SECONDARY")
                         .setCustomId("ticket-cancel-close")
-                        .setLabel("Cancel")
+                        .setLabel("Cancelar")
                 ]
             )
 
-        interaction.reply({ content: "Do you really want to close the ticket?", ephemeral: true })
-        interaction.channel.send({ content: "Do you want to save the ticket?", components: [confirm_buttons] }).then(async (msg) => {
+        // interaction.reply({ content: "Do you really want to close the ticket?", ephemeral: true })
+        interaction.reply({ content: "Quieres guardar el ticket?", components: [confirm_buttons] })
+        await interaction.fetchReply().then(async (msg) => {
 
             const ifilter = i => i.user.id === interaction.member.id
             const collector = msg.createMessageComponentCollector({ filter: ifilter, componentType: "BUTTON", time: 60000 })
