@@ -15,9 +15,38 @@ module.exports = {
         const usuario_role = interaction.guild.roles.cache.find(role => role.name === "• Usuario");
         const everyone_role = interaction.guild.roles.cache.find(role => role.name === "@everyone");
 
+        let categoryParent;
+
+        if (interaction.channel.parent) {
+            categoryParent = interaction.channel.parent;
+        } else {
+            if(!interaction.guild.channels.cache.find(channel => channel.name === "TICKETS")) { 
+                categoryParent = await interaction.guild.channels.create(`TICKETS`, {
+                    type: "GUILD_CATEGORY",
+                    permissionOverwrites: [
+                        {
+                            id: interaction.user.id,
+                            allow: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                        },
+                        {
+                            id: usuario_role.id,
+                            deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                        },
+                        {
+                            id: everyone_role.id,
+                            deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                        }
+                    ]
+                })
+            } else {
+                categoryParent = interaction.guild.channels.cache.find(channel => channel.name === "TICKETS");
+            }
+
+        }
+
         interaction.guild.channels.create(`ticket-${username}`, {
             type: "GUILD_TEXT",
-            parent: interaction.channel.parent.id,
+            parent: categoryParent.id,
             permissionOverwrites: [
                 {
                     id: interaction.user.id,
@@ -39,7 +68,6 @@ module.exports = {
             const ticketCreated_embed = new Discord.MessageEmbed()
             .setTitle("Ticket creado!")
             .setDescription(`La ayuda llegará enseguida.\nEmpieza por decirnos el motivo del ticket, con ayuda del menú inferior.\n\nSi **no eliges ninguna categoría**, el ticket se **cerrará** automaticamente en **2 minutos**.`)
-            .setFooter({ text: `${interaction.guild.name} Staff`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
             .setColor(config.colorlessEmbed)
 
             const ticketCategoryMenu = new Discord.MessageActionRow()
@@ -128,7 +156,6 @@ module.exports = {
                     const ticket_embed = new Discord.MessageEmbed()
                     .setTitle("Ticket creado!")
                     .setDescription(`La ayuda llegará enseguida.\n<@${i.member.id}> ha creado un ticket con motivo de \`\`${category}\`\`.`)
-                    .setFooter({ text: `${i.guild.name} Staff`, iconURL: i.guild.iconURL({ dynamic: true }) })
                     .setColor(config.colorlessEmbed)
 
                     const ticket_buttons = new Discord.MessageActionRow()
@@ -160,19 +187,21 @@ module.exports = {
 
                 collector.on("end", collected => {
                     if (collected.size < 1) {
-                        msg.channel.send({ content: `No se ha seleccionado ninguna categoría. Cerrando ticket...`}).then(() => {
-                            setTimeout(() => {
-                                if (msg.channel.deletable) msg.channel.delete();
-                            }, 5000);
-                        });
+                        try {
+                            msg.channel.send({ content: `No se ha seleccionado ninguna categoría. Cerrando ticket...`}).then(() => {
+                                setTimeout(() => {
+                                    if (msg.channel.deletable) msg.channel.delete();
+                                }, 5000);
+                            }).catch(err);
+                        } catch (error) {
+                            console.log("[IGNORE_ERR] Ticket channel was deleted before the collector ended.") 
+                        }
                     }
                 });
 
             });
 
-
         });
-
 
     }
 

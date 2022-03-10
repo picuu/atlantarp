@@ -28,10 +28,12 @@ module.exports = {
             logsChannel = await interaction.guild.channels.cache.get(data.channelId)
 
             logsChannel.send({ content: `**NUEVO TICKET GUARDADO**\n${date}-${interaction.channel.name}`, files: [attachment] })
+        } else {
+             return interaction.reply({ content: `No hay un canal establecido para los logs de los Tickets. Establece uno con el comando \`\`/set_logs\`\`.`, ephemeral: true })
         }
 
         if (interaction.channel.deletable) {
-            
+
             interaction.reply({ content: "El ticket se ha guardado con éxito! Eliminando canal..."})
 
             setTimeout(() => {

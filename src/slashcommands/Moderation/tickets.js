@@ -13,7 +13,6 @@ module.exports = {
         const tickets_embed = new Discord.MessageEmbed()
             .setTitle("Tickets")
             .setDescription("Haga click en el botón de abajo para crear un nuevo ticket de ayuda. Solo será visible para tú y el staff.\nAbra un ticket **solo cuando sea estrictamente necesario** o podrá ser penalizado.")
-            .setFooter({ text: `${interaction.guild.name} Staff`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
             .setColor(config.colorlessEmbed);
 
         const button = new Discord.MessageActionRow()
