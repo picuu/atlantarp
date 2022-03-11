@@ -20,7 +20,7 @@ module.exports = {
                 [
                     new Discord.MessageButton()
                         .setStyle("SUCCESS")
-                        .setCustomId("new-ticket")
+                        .setCustomId("ticket-new")
                         .setLabel("Crear nuevo ticket")
                         .setEmoji("🎫")
                 ],
