@@ -1,5 +1,5 @@
-const Discord = require("discord.js")
-const config = require("../config.json")
+const Discord = require("discord.js");
+const config = require("../config.json");
 
 module.exports = {
     data: {
@@ -7,7 +7,7 @@ module.exports = {
     },
 
     async run(client, interaction) {
-       
+
         let username = interaction.user.username.toLowerCase().replace(/\W/g, "-").replace(/--/g, "-").replace(/-$/, "");
         let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.name === `ticket-${username}`));
         if (AlreadyCreatedTicket) return interaction.reply({ content: "Ya tienes un ticket abierto, no puedes crear otro!", ephemeral: true });
@@ -67,7 +67,7 @@ module.exports = {
 
             const ticketCreated_embed = new Discord.MessageEmbed()
             .setTitle("Ticket creado!")
-            .setDescription(`La ayuda llegará enseguida.\nEmpieza por decirnos el motivo del ticket, con ayuda del menú inferior.\n\nSi **no eliges ninguna categoría**, el ticket se **cerrará** automaticamente en **2 minutos**.`)
+            .setDescription(`La ayuda llegará enseguida.\nEmpieza por decirnos el motivo del ticket con ayuda del menú inferior.\n\nSi **no eliges ninguna categoría**, el ticket se **cerrará** automaticamente en **2 minutos**.`)
             .setColor(config.colorlessEmbed)
 
             const ticketCategoryMenu = new Discord.MessageActionRow()
@@ -78,43 +78,43 @@ module.exports = {
                         .addOptions([
                             {
                                 label: "Soporte",
-                                description: "Soporte",
+                                description: "Pide ayuda sobre un tema relacionado con soporte",
                                 value: "soporte",
                                 emoji: "🔧"
                             },
                             {
                                 label: "CK/PKT",
-                                description: "CK/PKT",
+                                description: "Pide ayuda sobre un tema relacionado con CK/PKT",
                                 value: "ck-pkt",
                                 emoji: "💀"
                             },
                             {
                                 label: "Donaciones",
-                                description: "Donaciones",
+                                description: "Pide ayuda sobre un tema relacionado con donaciones",
                                 value: "donaciones",
                                 emoji: "💸"
                             },
                             {
                                 label: "Reportes",
-                                description: "Reportes",
+                                description: "Pide ayuda sobre un tema relacionado con reportes, o reporta a algun usuario",
                                 value: "reportes",
                                 emoji: "⛔"
                             },
                             {
                                 label: "Sistema ilícito",
-                                description: "Sistema ilícito",
+                                description: "Avisa sobre un sistema ilícito",
                                 value: "sist-ilicito",
                                 emoji: "🔪"
                             },
                             {
                                 label: "Comercio",
-                                description: "Comercio",
+                                description: "Pide ayuda sobre un tema relacionado con comercio",
                                 value: "comercio",
                                 emoji: "🧑‍💼"
                             },
                             {
                                 label: "Otros",
-                                description: "Otros",
+                                description: "Pide ayuda sobre otro tema",
                                 value: "otros",
                                 emoji: "📋"
                             }
@@ -194,7 +194,7 @@ module.exports = {
                                 }, 5000);
                             }).catch(err);
                         } catch (error) {
-                            console.log("[IGNORE_ERR] Ticket channel was deleted before the collector ended.") 
+                            console.log("[IGNORE_ERR] El canal del ticket ha sido eliminado antes de que el collector terminara.") 
                         }
                     }
                 });

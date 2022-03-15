@@ -1,27 +1,24 @@
 const Discord = require("discord.js");
-const joinsLogsChannelModel = require("../models/joinsLogs.js")
+const joinsModel = require("../models/joinsLogs.js");
 
 module.exports = {
     name: "guildMemberRemove",
 
     async execute(client, member) {
 
-        let joinsLogsChannel;
-        let data = await joinsLogsChannelModel.findOne({ guildId: member.guild.id })
-        if (!data) {
-                return;
-        } else {
-            joinsLogsChannel = data.channelId
-        }
-
         const embed = new Discord.MessageEmbed()
             .setTitle(`${member.user.tag} | ${member.user.id}`)
-            .setDescription(`Left the server.\nJoined at: <t:${Math.floor(member.joinedTimestamp / 1000)}:R>`)
+            .setDescription(`Se ha ido del servidor.\nSe unió <t:${Math.floor(member.joinedTimestamp / 1000)}:f>`)
             .setTimestamp()
             .setColor("RED")
-
-        member.guild.channels.cache.get(joinsLogsChannel).send({ embeds: [embed] })
-
+        
+        let joinsChannel;
+        let data = await joinsModel.findOne({ guildId: member.guild.id })
+        if (data) {
+            joinsChannel = data.channelId;
+            
+            member.guild.channels.cache.get(joinsLogsChannel).send({ embeds: [embed] })
+        }
 
     }
 }

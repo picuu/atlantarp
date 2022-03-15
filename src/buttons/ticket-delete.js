@@ -1,6 +1,6 @@
-const Discord = require("discord.js")
-const config = require("../config.json")
-const ticketsLogsChannelModel = require("../models/ticketsLogs.js")
+const Discord = require("discord.js");
+const config = require("../config.json");
+const ticketsLogsModel = require("../models/ticketsLogs.js");
 
 module.exports = {
     data: {
@@ -8,11 +8,12 @@ module.exports = {
     },
 
     async run(client, interaction) {
-
-        if (!interaction.member.permissions.has("MANAGE_CHANNELS")) return interaction.reply({ content: "Solo los administradores y staff pueden eliminar tickets!", ephemeral: true });
+        // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
+        const rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+        if (!rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
         
         let logsChannel;
-        let data = await ticketsLogsChannelModel.findOne({ guildId: interaction.member.guild.id })
+        let data = await ticketsLogsModel.findOne({ guildId: interaction.member.guild.id })
         if (data) {
             logsChannel = await interaction.guild.channels.cache.get(data.channelId)
 

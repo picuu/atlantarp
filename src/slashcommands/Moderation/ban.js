@@ -1,39 +1,42 @@
-const { SlashCommandBuilder } = require("@discordjs/builders")
-const Discord = require("discord.js")
-const config = require("../../config.json")
-const bansLogsChannelModel = require("../../models/bansLogs.js")
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const Discord = require("discord.js");
+const config = require("../../config.json");
+const bansLogsModel = require("../../models/bansLogs.js");
 
 module.exports = {
     name: "ban",
     data: new SlashCommandBuilder()
         .setName("ban")
-        .setDescription("Ban an user.")
-        .addUserOption(option => option.setName("user").setDescription("The user you want to ban.").setRequired(true))
-        .addStringOption(option => option.setName("reason").setDescription("The reason for the ban, if any.").setRequired(false)),
+        .setDescription("Banea un usuario.")
+        .addUserOption(option => option.setName("usuario").setDescription("El usuario a banear.").setRequired(true))
+        .addStringOption(option => option.setName("razon").setDescription("La razón del baneo, si existe.").setRequired(false)),
 
     async run(client, interaction) {
 
-        if (!interaction.member.permissions.has("BAN_MEMBERS")) return interaction.reply({ content: `You desn't have enough permissions!`, ephemeral: true });
+        // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
+        const rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+        if (!rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
+        if (!interaction.member.permissions.has("BAN_MEMBERS")) return interaction.reply({ content: `No tienes los permisos suficientes para hacer eso!`, ephemeral: true });
 
-        if (!interaction.guild.me.permissions.has("BAN_MEMBERS")) return interaction.reply({ content: `I don't have enough permissions! I need the *BAN_MEMBERS* permission to do that.`});
+        if (!interaction.guild.me.permissions.has("BAN_MEMBERS")) return interaction.reply({ content: `Me faltan permisos! Necesito el permiso de **banear miembros** para hacer eso.` });
 
-        const user = interaction.options.getUser("user");
-        const reason = interaction.options.getString("reason");
+        const user = interaction.options.getUser("usuario");
+        const reason = interaction.options.getString("razon");
 
         const member = await interaction.guild.members.fetch(user.id)
 
         const embed = new Discord.MessageEmbed()
             .setColor(config.defaultErrorColor)
-            .setTitle(`${member.user.tag} banned!`)
-            .setDescription(`**User ID:** ${user.id}\n**Reason:** ${reason ? reason : "No reason provied"}`)
-            .setFooter({ text: "Banned at"})
+            .setTitle(`${member.user.tag} baneado!`)
+            .setDescription(`**ID del Usuario:** ${user.id}\n**Razón:** ${reason ? reason : "No se ha proporcionado ningúna razón."}`)
+            .setFooter({ text: `Baneado por ${interaction.member.user.tag}` })
             .setTimestamp()
 
-        await member.ban({ reason: `${reason ? reason : "No reason provied"}` }).then(async () => {
-            interaction.reply({ content: `**${member.user.tag}** has been banned.`, ephemeral: true })
+        await member.ban({ reason: `${reason ? reason : "No se ha proporcionado ningúna razón."}` }).then(async () => {
+            interaction.reply({ content: `**${member.user.tag}** ha sido baneado.`, ephemeral: true })
 
             let logsChannel;
-            let data = await bansLogsChannelModel.findOne({ guildId: interaction.member.guild.id })
+            let data = await bansLogsModel.findOne({ guildId: interaction.member.guild.id })
             if (data) {
                 logsChannel = await interaction.guild.channels.cache.get(data.channelId)
     

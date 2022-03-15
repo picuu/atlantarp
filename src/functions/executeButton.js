@@ -10,8 +10,7 @@ module.exports = async (client, interaction) => {
         await button.run(client, interaction)
     } catch (err) {
         console.error(err)
-        return interaction.reply({ content: "An error occurred while executing the command.", ephemeral: true })
+        return interaction.reply({ content: "Ha ocurrido un error al ejecutar el comando.", ephemeral: true })
     }
 
 }
-

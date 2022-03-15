@@ -1,6 +1,6 @@
-const { SlashCommandBuilder } = require("@discordjs/builders")
-const Discord = require("discord.js")
-const config = require("../../config.json")
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const Discord = require("discord.js");
+const config = require("../../config.json");
 
 module.exports = {
     name: "tickets",
@@ -9,6 +9,10 @@ module.exports = {
         .setDescription("El bot envia el mensaje de los tickets."),
 
     async run(client, interaction) {
+
+        // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
+        const rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+        if (!rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
 
         const tickets_embed = new Discord.MessageEmbed()
             .setTitle("Tickets")

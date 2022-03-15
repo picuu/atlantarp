@@ -1,39 +1,41 @@
-const { SlashCommandBuilder } = require("@discordjs/builders")
-const Discord = require("discord.js")
-const config = require("../../config.json")
-const bansLogsChannelModel = require("../../models/bansLogs.js")
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const Discord = require("discord.js");
+const config = require("../../config.json");
+const bansLogsModel = require("../../models/bansLogs.js");
 
 module.exports = {
     name: "kick",
     data: new SlashCommandBuilder()
         .setName("kick")
-        .setDescription("Kick an user.")
-        .addUserOption(option => option.setName("user").setDescription("The user you want to kick.").setRequired(true))
-        .addStringOption(option => option.setName("reason").setDescription("The reason for the kick, if any.").setRequired(false)),
+        .setDescription("Expulsa a un miembro del servidor.")
+        .addUserOption(option => option.setName("usuario").setDescription("El usuario a expulsar.").setRequired(true))
+        .addStringOption(option => option.setName("razon").setDescription("La razón de la expulsión, si existe.").setRequired(false)),
 
     async run(client, interaction) {
 
-        if (!interaction.member.permissions.has("KICK_MEMBERS")) return interaction.reply({ content: `You desn't have enough permissions!`, ephemeral: true });
+        const rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+        if (!rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
+        if (!interaction.member.permissions.has("KICK_MEMBERS")) return interaction.reply({ content: `No tienes los permisos suficientes para hacer eso!`, ephemeral: true });
 
-        if (!interaction.guild.me.permissions.has("KICK_MEMBERS")) return interaction.reply({ content: `I don't have enough permissions! I need the *KICK_MEMBERS* permission to do that.`});
+        if (!interaction.guild.me.permissions.has("KICK_MEMBERS")) return interaction.reply({ content: `Me faltan permisos! Necesito el permiso de **expulsar miembros** para hacer eso.` });
 
-        const user = interaction.options.getUser("user");
-        const reason = interaction.options.getString("reason");
+        const user = interaction.options.getUser("usuario");
+        const reason = interaction.options.getString("razon");
 
         const member = await interaction.guild.members.fetch(user.id)
 
         const embed = new Discord.MessageEmbed()
             .setColor(config.defaultErrorColor)
-            .setTitle(`${member.user.tag} kicked!`)
-            .setDescription(`**User ID:** ${user.id}\n**Reason:** ${reason ? reason : "No reason provied"}`)
-            .setFooter({ text: "Kicked at"})
+            .setTitle(`${member.user.tag} expulsado!`)
+            .setDescription(`**ID del Usuario:** ${user.id}\n**Razón:** ${reason ? reason : "No se ha proporcionado ningúna razón."}`)
+            .setFooter({ text: `Expulsado por ${interaction.member.user.tag}` })
             .setTimestamp()
 
-        await member.kick({ reason: `${reason ? reason : "No reason provied"}` }).then(async () => {
-            interaction.reply({ content: `**${member.user.tag}** has been kicked.`, ephemeral: true })
+        await member.kick({ reason: `${reason ? reason : "No se ha proporcionado ningúna razón."}` }).then(async () => {
+            interaction.reply({ content: `**${member.user.tag}** ha sido expulsado del servidor.`, ephemeral: true })
 
             let logsChannel;
-            let data = await bansLogsChannelModel.findOne({ guildId: interaction.member.guild.id })
+            let data = await bansLogsModel.findOne({ guildId: interaction.member.guild.id })
             if (data) {
                 logsChannel = await interaction.guild.channels.cache.get(data.channelId)
     
