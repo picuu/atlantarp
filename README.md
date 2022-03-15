@@ -6,8 +6,6 @@
   <br>
 </div>
 
-![Lines of code](https://img.shields.io/tokei/lines/github/Picuu/atlantarp?style=for-the-badge)
-
 > Successor to *Anon Modders* bot.
 
 > This bot is the evolution, the next generation, of the *Anon Modders* bot.
