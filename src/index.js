@@ -25,23 +25,21 @@ async function updatePresence() {
     await client.user.setActivity(`${memberNum} members`, { type: "WATCHING" });
 }
 
-const discordModals = require("discord-modals")
+const discordModals = require("discord-modals");
 discordModals(client)
 
 client.on("modalSubmit", async (modal) => {
-    if (modal.customId === "tools-modal") {
+
+    if (modal.customId === "general-modal") {
 
         await modal.deferReply({ ephemeral: true })
 
-        const title = modal.getTextInputValue("text-title");
-        const description = modal.getTextInputValue("text-description");
-        const warning = modal.getTextInputValue("text-warning");
-        const link = modal.getTextInputValue("text-link");
+        const text = modal.getTextInputValue("text");
         const imgs = modal.getTextInputValue("text-imgs");
 
         modal.followUp({ content: "The modal has been sent!", ephemeral: true })
 
-        const messageContent = `**${title}**\n\n${description}\n\n**${warning}**\n\n${link}`;
+        const messageContent = `${text}`;
 
         if (!imgs) {
             return modal.channel.send({ content: messageContent })
@@ -50,6 +48,7 @@ client.on("modalSubmit", async (modal) => {
         }
 
     }
-})
 
-client.login(process.env.token)
+});
+
+client.login(process.env.token);

@@ -1,6 +1,8 @@
-const Discord = require("discord.js")
-const config = require("../config.json")
-const ms = require("ms")
+const Discord = require("discord.js");
+const config = require("../config.json");
+const whitelistModel = require("../models/whitelistLogs.js");
+const { createTranscript } = require("discord-html-transcripts");
+const ms = require("ms");
 
 module.exports = {
     data: {
@@ -10,7 +12,7 @@ module.exports = {
     async run(client, interaction) {
        
         let username = interaction.user.username.toLowerCase().replace(/\W/g, "-").replace(/--/g, "-").replace(/-$/, "");
-        let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.name === `allow-petition-${username}`));
+        let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.name === `solicitud-${username}`));
         if (AlreadyCreatedTicket) return interaction.reply({ content: "Ya tienes una solicitud abierta, no puedes abrir otra!", ephemeral: true });
 
         const usuario_role = interaction.guild.roles.cache.find(role => role.name === "• Usuario");
@@ -44,7 +46,7 @@ module.exports = {
             }
         }
 
-        interaction.guild.channels.create(`allow-petition-${username}`, {
+        interaction.guild.channels.create(`solicitud-${username}`, {
             type: "GUILD_TEXT",
             parent: categoryParent.id,
             permissionOverwrites: [
@@ -66,7 +68,7 @@ module.exports = {
             interaction.reply({ content: `Tu solicitud se ha creado correctamente! Ve a <#${petitionChannel.id}>`, ephemeral: true })
 
             const petitionOpened_embed = new Discord.MessageEmbed()
-            .setTitle("Petición creada!")
+            .setTitle("Solicitud creada!")
             .setDescription(
                 `Envia un mensaje rellenando los siguientes campos:\n` +
                 `\`\`\`Nombre de tu personaje\nFecha de nacimiento\nOrigen del personaje\nTrabajos o empleos que ha tenido o aspire a tener\nExpectativas con las que tu personaje viene/vuelve a la ciudad de Los Santos\nDetalla la mentalidad y personalidad de tu personaje\nHistoria del personaje\`\`\`` +
@@ -79,14 +81,14 @@ module.exports = {
                     [
                         new Discord.MessageButton()
                             .setStyle("SUCCESS")
-                            .setCustomId("petition-accept")
+                            .setCustomId("whitelist-accept")
                             .setLabel("Aceptar petición")
                             .setEmoji("✅")
                     ],
                     [
                         new Discord.MessageButton()
                             .setStyle("DANGER")
-                            .setCustomId("petition-deny")
+                            .setCustomId("whitelist-deny")
                             .setLabel("Denegar petición")
                             .setEmoji("❎")
                     ]
@@ -99,45 +101,81 @@ module.exports = {
 
                 collector.on("collect", async i => {
 
-                    // Roles: TestServerSoporte, Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
-                    rolesIds = "951239979936387153" || "934149605984174144" || "934149605984174145" || "934149605984174146" || "934149605963210832" || "934149605984174149" || "934149606013567006" || "934149606013567007" || "934149606013567008";
-                    if (!i.member.roles.cache.has(rolesIds)) return i.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
+                    // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
+                    const rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+                    if (!rolesIds.some(r => i.member.roles.cache.has(r))) return i.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
 
-                    if (i.customId === "petition-accept") {
+                    if (i.customId === "whitelist-accept") {
                         
-                        changePermissions(i, interaction.member)
+                        i.channel.permissionOverwrites.edit(interaction.member, {
+                            SEND_MESSAGES: false,
+                        });
 
                         const usuarioRoleId = "934149605938065455";
-                        const testRoleId = "930550538481844314";
-                        interaction.member.roles.add(testRoleId);
+                        // const testRoleId = "930550538481844314";
+                        interaction.member.roles.add(usuarioRoleId);
 
-                        i.reply({ content: "La petición ha sido aceptada correctamente!", ephemeral: true })
-                        i.channel.send({ content:`<@${interaction.member.user.id}>, tu solicitud ha sido aceptada! Ya tienes total acceso al servidor.\nEste canal se eliminará en 8 horas.`})
+                        const registerPetitionEmbed = new Discord.MessageEmbed()
+                            .setColor("GREEN")    
+                            .setTitle("Nuevo usuario aceptado")
+                            .setDescription(`**Usuario:** ${interaction.member.user.tag}\n**ID:** ${interaction.member.id}\n**Aceptado por:** ${i.member.user.tag}`)
+                            .setTimestamp()
 
-
-                    } else if (i.customId === "petition-deny") {
-
-                        changePermissions(i, interaction.member)
+                        const attachment = await createTranscript(petitionChannel, {
+                            limit: -1,
+                            returnBuffer: false,
+                            fileName: `whitelist-accept-${petitionChannel.name}.html`
+                        })
                         
+                        let logsChannel;
+                        let data = await whitelistModel.findOne({ guildId: interaction.member.guild.id })
+                        if (data) {
+                            logsChannel = await interaction.guild.channels.cache.get(data.channelId)
+                
+                            logsChannel.send({ embeds: [registerPetitionEmbed], files: [attachment] })
+                        } else {
+                            return i.reply({ content: `No hay un canal establecido para los logs de la Whitelist. Establece uno con el comando \`\`/set_logs\`\`.`, ephemeral: true })
+                        }
+
+                        i.reply({ content: "La petición ha sido aceptada correctamente! El canal se eliminará en 10 segundos...", ephemeral: true })
+
+                        channel.edit({ embeds: [petitionOpened_embed], components: [] }).then(() => {
+                            collector.stop()
+                            setTimeout(() => {
+                                if (petitionChannel.deletable) {
+                                    petitionChannel.delete()
+                                }
+                            }, ms("10s"));
+                        });
+
+                    } else if (i.customId === "whitelist-deny") {
+
+                        const registerPetitionEmbed = new Discord.MessageEmbed()
+                        .setColor("RED")    
+                        .setTitle("Nuevo usuario denegado")
+                        .setDescription(`**Usuario:** ${interaction.member.user.tag}\n**ID:** ${interaction.member.id}\n**Denegado por:** ${i.member.user.tag}`)
+                        .setTimestamp()
+
+                        const attachment = await createTranscript(petitionChannel, {
+                            limit: -1,
+                            returnBuffer: false,
+                            fileName: `whitelist-accept-${petitionChannel.name}.html`
+                        })
+                        
+                        let logsChannel;
+                        let data = await whitelistModel.findOne({ guildId: interaction.member.guild.id })
+                        if (data) {
+                            logsChannel = await interaction.guild.channels.cache.get(data.channelId)
+                
+                            logsChannel.send({ embeds: [registerPetitionEmbed], files: [attachment] })
+                        } else {
+                            return i.reply({ content: `No hay un canal establecido para los logs de la Whitelist. Establece uno con el comando \`\`/set_logs\`\`.`, ephemeral: true })
+                        }
+
                         i.reply({ content: "La petición ha sido denegada.", ephemeral: true })
-                        i.channel.send({ content: `<@${interaction.member.user.id}>, lo sentimos, tu solicitud ha sido denegada. Vuelve a intentarlo en un futuro.\nEste canal se eliminará en 8 horas.`})
+                        i.channel.send({ content: `<@${interaction.member.user.id}>, tu solicitud ha sido rechazada. Corrige los siguientes errores, por favor:` })
 
                     }
-
-                    function changePermissions (int, member) {
-                        int.channel.permissionOverwrites.edit(member, {
-                            SEND_MESSAGES: false,
-                        })
-                    };
-
-                    channel.edit({ embeds: [petitionOpened_embed], components: [] }).then(() => {
-                        collector.stop()
-                        setTimeout(() => {
-                            if (petitionChannel.deletable) {
-                                petitionChannel.delete()
-                            }
-                        }, ms("8h"))
-                    })
     
                 });
 

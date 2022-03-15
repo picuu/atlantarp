@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders")
 const joinsLogsChannelModel = require("../../models/joinsLogs.js")
 const ticketsLogsChannelModel = require("../../models/ticketsLogs.js")
 const bansLogsChannelModel = require("../../models/bansLogs.js")
+const whitelistModel = require("../../models/whitelistLogs.js")
 
 module.exports = {
     name: "setjoinslogs",
@@ -16,6 +17,7 @@ module.exports = {
             .addChoice("Joins and Leaves", "joins-leaves")
             .addChoice("Tickets", "tickets")
             .addChoice("Kicks, Bans and Timeouts", "kicks-bans-timeouts")
+            .addChoice("Whitelist", "whitelist")
             .setRequired(true)),
 
     async run(client, interaction) {
@@ -43,7 +45,7 @@ module.exports = {
                     })
                 }
         
-                interaction.reply({ content: "The channel has been set to be the **Joins Logs Channel**", ephemeral: true })
+                interaction.reply({ content: "El canal se usará para registrar la **entrada y salida de usuarios** en el servidor.", ephemeral: true })
                 
                 break;
         
@@ -63,7 +65,7 @@ module.exports = {
                     })
                 }
         
-                interaction.reply({ content: "The channel has been set to be the **Tickets Logs Channel**", ephemeral: true })
+                interaction.reply({ content: "El canal se usará para registrar los **tickets de ayuda**.", ephemeral: true })
 
                 break;
 
@@ -83,7 +85,27 @@ module.exports = {
                     })
                 }
         
-                interaction.reply({ content: "The channel has been set to be the **Bans & Kicks Logs Channel**", ephemeral: true })
+                interaction.reply({ content: "El canal se usará para registar los **bans**, **kicks**, y **timeouts**.", ephemeral: true })
+
+                break;
+
+            case "whitelist":
+
+                let whitelistData = await whitelistModel.findOne({ guildId: interaction.member.guild.id })
+                if (!whitelistData) {
+                    let newWhitelistDataa = new whitelistModel({
+                        guildId: interaction.member.guild.id,
+                        channelId: interaction.channel.id
+                    })
+                    await newWhitelistDataa.save()
+                } else {
+                    await whitelistModel.findOneAndUpdate({
+                        guildId: interaction.member.guild.id,
+                        channelId: interaction.channel.id
+                    })
+                }
+        
+                interaction.reply({ content: "El canal se usará para registar la aceptación/denegación de nuevos usuarios.", ephemeral: true })
 
                 break;
         }

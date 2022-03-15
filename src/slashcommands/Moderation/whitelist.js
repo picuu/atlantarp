@@ -3,10 +3,10 @@ const Discord = require("discord.js")
 const config = require("../../config.json")
 
 module.exports = {
-    name: "allowlist",
+    name: "whitelist",
     data: new SlashCommandBuilder()
-        .setName("allowlist")
-        .setDescription("El bot envia el mensaje de la AllowList."),
+        .setName("whitelist")
+        .setDescription("El bot envia el mensaje de la Whitelist."),
 
     async run(client, interaction) {
 

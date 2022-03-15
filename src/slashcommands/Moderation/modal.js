@@ -10,44 +10,16 @@ module.exports = {
     async run(client, interaction) {
 
         const modal = new Modal()
-            .setCustomId("tools-modal")
-            .setTitle("Send an Embed")
+            .setCustomId("general-modal")
+            .setTitle("Send a message through the bot.")
             .addComponents(
                 [
                     new TextInputComponent()
-                        .setCustomId("text-title")
-                        .setLabel("Title")
-                        .setStyle("SHORT")
-                        .setMaxLength(256)
-                        .setPlaceholder("Write the title of the embed")
-                        .setRequired(false)
-                ],
-                [
-                    new TextInputComponent()
-                        .setCustomId("text-description")
-                        .setLabel("Description")
+                        .setCustomId("text")
+                        .setLabel("Text")
                         .setStyle("LONG")
                         .setMaxLength(3072)
-                        .setPlaceholder("Writhe the description of the embed")
-                        .setRequired(false)
-                ],
-                [
-                    new TextInputComponent()
-                        .setCustomId("text-warning")
-                        .setLabel("Warning")
-                        .setStyle("LONG")
-                        .setMaxLength(256)
-                        .setPlaceholder("Let it in blank for default warning")
-                        .setDefaultValue("RECORDAR DESACTIVAR VUESTRO ANTIVIRUS")
-                        .setRequired(false)
-                ],
-                [
-                    new TextInputComponent()
-                        .setCustomId("text-link")
-                        .setLabel("Link")
-                        .setStyle("SHORT")
-                        .setMaxLength(2048)
-                        .setPlaceholder("Writhe the description of the embed")
+                        .setPlaceholder("Text input")
                         .setRequired(false)
                 ],
                 [
@@ -55,7 +27,7 @@ module.exports = {
                         .setCustomId("text-imgs")
                         .setLabel("Images links")
                         .setStyle("SHORT")
-                        .setMaxLength(768)
+                        .setMaxLength(928)
                         .setPlaceholder("Links of the images you want, separated by spaces")
                         .setRequired(false)
                 ]
