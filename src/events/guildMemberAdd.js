@@ -1,17 +1,12 @@
 const { MessageAttachment, MessageEmbed } = require("discord.js");
-const joinsLogsChannelModel = require("../models/joinsLogs.js")
-const { createCanvas, loadImage, registerFont } = require("canvas")
+const joinsLogsModel = require("../models/joinsLogs.js");
+const welcomesModel = require("../models/welcomes.js")
+const { createCanvas, loadImage, registerFont } = require("canvas");
 
 module.exports = {
     name: "guildMemberAdd",
 
     async execute(client, member) {
-
-        // Add role to new member
-
-        const memberRole = member.guild.roles.cache.find(role => role.name === "• Usuario") || member.guild.roles.cache.find(role => role.id === "930550538481844314")
-        member.roles.add(memberRole.id)
-
 
         // Welcome image
 
@@ -57,28 +52,32 @@ module.exports = {
         const avatar = await loadImage(member.user.displayAvatarURL({ format: 'png' }));
 		ctx.drawImage(avatar, 391, 55, 245, 245);
 
-
 		const attachment = new MessageAttachment(canvas.toBuffer(), 'welcome.png');
-        client.channels.cache.get("937740212916867103").send({ files: [attachment] });
+
+        let welcomesChannel;
+        let welcomesData = await welcomesModel.findOne({ guildId: member.guild.id })
+        if (welcomesData) {
+            welcomesChannel = welcomesData.channelId;
+
+            client.channels.cache.get(welcomesChannel).send({ files: [attachment] });
+        };
 
 
         // Send join log
 
-        let joinsLogsChannel;
-        let data = await joinsLogsChannelModel.findOne({ guildId: member.guild.id })
-        if (!data) {
-                return;
-        } else {
-            joinsLogsChannel = data.channelId
-        }
-
         const embed = new MessageEmbed()
             .setTitle(`${member.user.tag} | ${member.user.id}`)
-            .setDescription(`Joined the server.`)
+            .setDescription(`Se ha unido al servidor.`)
             .setTimestamp()
             .setColor("GREEN")
 
-        member.guild.channels.cache.get(joinsLogsChannel).send({ embeds: [embed] })
+        let joinsLogsChannel;
+        let joinsData = await joinsLogsModel.findOne({ guildId: member.guild.id })
+        if (joinsData) {
+            joinsLogsChannel = joinsData.channelId;
+
+            member.guild.channels.cache.get(joinsLogsChannel).send({ embeds: [embed] });
+        };
 
     }
 }
