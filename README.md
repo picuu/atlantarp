@@ -6,7 +6,7 @@
 [![GitHub](https://img.shields.io/github/license/Picuu/atlantarp?style=for-the-badge)](https://github.com/Picuu/atlantarp/blob/master/LICENSE)
 [![Discord](https://img.shields.io/discord/934149605912895538?color=5865F2&logo=Discord&logoColor=white&style=for-the-badge)](https://discord.com/invite/UXQhUTDwyP)
 
-> Sucesor del bot de *Anon Modders*. Este es la evolución, la siguiente generación, del bot *Anon Modders*. *Anon Modders* se renovó y ahora es una comunidad de RolePlay llamada **Atlanta RP**.
+> Sucesor del bot de *Anon Modders*. *Anon Modders* se renovó y ahora es una comunidad de RolePlay llamada **Atlanta RP**.
 
 Este bot está destinado a ayudar en la moderación del servidor de Discord de la comunidad Atlanta RolePlay.
 
