@@ -3,7 +3,7 @@ const config = require("../config.json");
 
 module.exports = {
     data: {
-        name: "new-ticket"
+        name: "ticket-new"
     },
 
     async run(client, interaction) {
@@ -12,37 +12,33 @@ module.exports = {
         let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.name === `ticket-${username}`));
         if (AlreadyCreatedTicket) return interaction.reply({ content: "Ya tienes un ticket abierto, no puedes crear otro!", ephemeral: true });
 
-        const usuario_role = interaction.guild.roles.cache.find(role => role.name === "• Usuario");
+        const usuario_roleId = "934149605938065455";
         const everyone_role = interaction.guild.roles.cache.find(role => role.name === "@everyone");
 
         let categoryParent;
 
-        if (interaction.channel.parent) {
-            categoryParent = interaction.channel.parent;
+        if(!interaction.guild.channels.cache.find(channel => channel.name === "TICKETS")) { 
+            categoryParent = await interaction.guild.channels.create(`TICKETS`, {
+                type: "GUILD_CATEGORY",
+                permissionOverwrites: [
+                    {
+                        id: interaction.user.id,
+                        allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
+                    },
+                    {
+                        id: usuario_roleId,
+                        deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                    },
+                    {
+                        id: everyone_role.id,
+                        deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                    }
+                ]
+            })
         } else {
-            if(!interaction.guild.channels.cache.find(channel => channel.name === "TICKETS")) { 
-                categoryParent = await interaction.guild.channels.create(`TICKETS`, {
-                    type: "GUILD_CATEGORY",
-                    permissionOverwrites: [
-                        {
-                            id: interaction.user.id,
-                            allow: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-                        },
-                        {
-                            id: usuario_role.id,
-                            deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-                        },
-                        {
-                            id: everyone_role.id,
-                            deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-                        }
-                    ]
-                })
-            } else {
-                categoryParent = interaction.guild.channels.cache.find(channel => channel.name === "TICKETS");
-            }
-
+            categoryParent = interaction.guild.channels.cache.find(channel => channel.name === "TICKETS");
         }
+
 
         interaction.guild.channels.create(`ticket-${username}`, {
             type: "GUILD_TEXT",
@@ -50,10 +46,10 @@ module.exports = {
             permissionOverwrites: [
                 {
                     id: interaction.user.id,
-                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
                 },
                 {
-                    id: usuario_role.id,
+                    id: usuario_roleId,
                     deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
                 },
                 {
@@ -179,8 +175,8 @@ module.exports = {
                     if (msg.deletable) {
                         msg.delete()
 
-                        const rolSoporte = i.guild.roles.cache.find(role => role.name === "🔧┃Soporte");
-                        msg.channel.send({ content: `<@&${rolSoporte.id}>`, embeds: [ticket_embed], components: [ticket_buttons] });
+                        const soporteRolId = "934149605984174144";
+                        msg.channel.send({ content: `<@&${soporteRolId}>`, embeds: [ticket_embed], components: [ticket_buttons] });
                     }
     
                 });
