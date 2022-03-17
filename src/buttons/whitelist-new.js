@@ -15,7 +15,7 @@ module.exports = {
         let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.name === `solicitud-${username}`));
         if (AlreadyCreatedTicket) return interaction.reply({ content: "Ya tienes una solicitud abierta, no puedes abrir otra!", ephemeral: true });
 
-        const usuario_role = interaction.guild.roles.cache.find(role => role.name === "• Usuario");
+        const usuario_roleId = "934149605938065455";
         const everyone_role = interaction.guild.roles.cache.find(role => role.name === "@everyone");
 
         let categoryParent;
@@ -29,10 +29,10 @@ module.exports = {
                     permissionOverwrites: [
                         {
                             id: interaction.user.id,
-                            allow: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                            allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
                         },
                         {
-                            id: usuario_role.id,
+                            id: usuario_roleId,
                             deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
                         },
                         {
@@ -52,10 +52,10 @@ module.exports = {
             permissionOverwrites: [
                 {
                     id: interaction.user.id,
-                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
                 },
                 {
-                    id: usuario_role.id,
+                    id: usuario_roleId,
                     deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
                 },
                 {
@@ -159,7 +159,7 @@ module.exports = {
                         const attachment = await createTranscript(petitionChannel, {
                             limit: -1,
                             returnBuffer: false,
-                            fileName: `whitelist-accept-${petitionChannel.name}.html`
+                            fileName: `whitelist-deny-${petitionChannel.name}.html`
                         })
                         
                         let logsChannel;
