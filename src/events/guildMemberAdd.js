@@ -68,6 +68,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle(`${member.user.tag} | ${member.user.id}`)
             .setDescription(`Se ha unido al servidor.`)
+            .setThumbnail(member.displayAvatarURL())
             .setTimestamp()
             .setColor("GREEN")
 

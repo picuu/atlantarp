@@ -9,6 +9,7 @@ module.exports = {
         const embed = new Discord.MessageEmbed()
             .setTitle(`${member.user.tag} | ${member.user.id}`)
             .setDescription(`Se ha ido del servidor.\nSe unió <t:${Math.floor(member.joinedTimestamp / 1000)}:f>`)
+            .setThumbnail(member.displayAvatarURL())
             .setTimestamp()
             .setColor("RED")
         
