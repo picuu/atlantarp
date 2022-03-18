@@ -38,9 +38,14 @@ module.exports = {
 
             interaction.reply({ content: "El ticket se ha guardado con éxito! Eliminando canal..."})
 
-            setTimeout(() => {
-                interaction.channel.delete()
-            }, 5000)
+            try {
+                setTimeout(() => {
+                    interaction.channel.delete()
+                }, 5000)
+            } catch (error) {
+                console.log(`[IGNORE_ERR] Se ha producido un error al intentar eliminar el canal *${interaction.channel.name}*.`)
+            }
+            
         }
     
     }
