@@ -9,7 +9,7 @@ module.exports = {
         const embed = new Discord.MessageEmbed()
             .setTitle(`${member.user.tag} | ${member.user.id}`)
             .setDescription(`Se ha ido del servidor.\nSe unió <t:${Math.floor(member.joinedTimestamp / 1000)}:f>`)
-            .setThumbnail(member.displayAvatarURL())
+            .setThumbnail(member.displayAvatarURL({ size: 300, dynamic: true, format: "png" }))
             .setTimestamp()
             .setColor("RED")
         
@@ -18,7 +18,7 @@ module.exports = {
         if (data) {
             joinsChannel = data.channelId;
             
-            member.guild.channels.cache.get(joinsLogsChannel).send({ embeds: [embed] })
+            member.guild.channels.cache.get(joinsChannel).send({ embeds: [embed] })
         }
 
     }

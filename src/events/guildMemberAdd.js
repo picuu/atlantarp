@@ -38,7 +38,7 @@ module.exports = {
         ctx.fillText("Bienvenido a Atlanta Roleplay, disfruta del rol!", 512, 345)
 
 		ctx.font = applyText(canvas, `${member.user.tag.toUpperCase()}`);
-		ctx.fillText(`${member.user.tag.toUpperCase()}`, 512, 400);
+		ctx.fillText(`${member.user.tag.toUpperCase()}`, 512, 405);
 
         ctx.beginPath();
         ctx.arc(512, 176, 133, 0, Math.PI * 2, true);
@@ -49,7 +49,7 @@ module.exports = {
 		ctx.closePath();
 		ctx.clip();
 
-        const avatar = await loadImage(member.user.displayAvatarURL({ format: 'png' }));
+        const avatar = await loadImage(member.user.displayAvatarURL({ size: 512, format: 'png' }));
 		ctx.drawImage(avatar, 391, 55, 245, 245);
 
 		const attachment = new MessageAttachment(canvas.toBuffer(), 'welcome.png');
@@ -67,17 +67,17 @@ module.exports = {
 
         const embed = new MessageEmbed()
             .setTitle(`${member.user.tag} | ${member.user.id}`)
-            .setDescription(`Se ha unido al servidor.`)
-            .setThumbnail(member.displayAvatarURL())
+            .setDescription(`Se ha unido al servidor.\n\nCreación de la cuenta: <t:${Math.floor(member.user.createdTimestamp / 1000)}:f>`)
+            .setThumbnail(member.displayAvatarURL({ size: 300, dynamic: true, format: "png" }))
             .setTimestamp()
             .setColor("GREEN")
 
-        let joinsLogsChannel;
+        let joinsChannel;
         let joinsData = await joinsLogsModel.findOne({ guildId: member.guild.id })
         if (joinsData) {
-            joinsLogsChannel = joinsData.channelId;
+            joinsChannel = joinsData.channelId;
 
-            member.guild.channels.cache.get(joinsLogsChannel).send({ embeds: [embed] });
+            member.guild.channels.cache.get(joinsChannel).send({ embeds: [embed] });
         };
 
     }
