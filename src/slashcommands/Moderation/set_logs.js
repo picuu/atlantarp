@@ -4,6 +4,7 @@ const ticketsLogsChannelModel = require("../../models/ticketsLogs.js");
 const bansLogsChannelModel = require("../../models/bansLogs.js");
 const whitelistModel = require("../../models/whitelistLogs.js");
 const welcomesModel = require("../../models/welcomes.js");
+const whitelistApprovedModel = require("../../models/whitelistApproved.js");
 
 module.exports = {
     name: "set_logs",
@@ -20,13 +21,14 @@ module.exports = {
             .addChoice("Kicks, Bans y Timeouts", "kicks-bans-timeouts")
             .addChoice("Whitelist", "whitelist")
             .addChoice("Bienvenidas", "welcomes")
+            .addChoice("Aprovados de la Whitelist", "whitelist-approved")
             .setRequired(true)),
 
     async run(client, interaction) {
 
         // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
-        const rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
-        if (!rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
+        const mods_rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+        if (!mods_rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
 
         // const type = interaction.options.getString("type")
 
@@ -130,6 +132,26 @@ module.exports = {
                 }
         
                 interaction.reply({ content: "El canal se usará para dar la bienvenida a los nuevos usuarios.", ephemeral: true })
+
+                break;
+
+            case "whitelist-approved":
+
+                let whitelistApprovedData = await whitelistApprovedModel.findOne({ guildId: interaction.member.guild.id });
+                if (!whitelistApprovedData) {
+                    let newWhitelistApprovedData = new whitelistApprovedModel({
+                        guildId: interaction.member.guild.id,
+                        channelId: interaction.channel.id
+                    });
+                    await newWhitelistApprovedData.save();
+                } else {
+                    await whitelistApprovedModel.findOneAndUpdate({
+                        guildId: interaction.member.guild.id,
+                        channelId: interaction.channel.id
+                    });
+                }
+        
+                interaction.reply({ content: "El canal se usará para anunciar los usuarios que han **aprobado la whitelist**.", ephemeral: true });
 
                 break;
         }

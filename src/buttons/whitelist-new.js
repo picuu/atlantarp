@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
 const whitelistModel = require("../models/whitelistLogs.js");
+const whitelistApprovedModel = require("../models/whitelistApproved.js");
 const { createTranscript } = require("discord-html-transcripts");
 const ms = require("ms");
 
@@ -69,7 +70,7 @@ module.exports = {
                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
                 },
                 {
-                    id: examinador_roleid,
+                    id: examinador_roleId,
                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
                 },
                 {
@@ -83,7 +84,7 @@ module.exports = {
             ]
         }).then(async (petitionChannel) => {
 
-            rolesIds.forEach(async (roleId) => {
+            mods_rolesIds.forEach(async (roleId) => {
                 const role = await interaction.guild.roles.fetch(roleId);
 
                 petitionChannel.permissionOverwrites.edit(role, {
@@ -154,9 +155,9 @@ module.exports = {
                         })
                         
                         let logsChannel;
-                        let data = await whitelistModel.findOne({ guildId: interaction.member.guild.id })
-                        if (data) {
-                            logsChannel = await interaction.guild.channels.cache.get(data.channelId)
+                        let logsData = await whitelistModel.findOne({ guildId: interaction.member.guild.id })
+                        if (logsData) {
+                            logsChannel = await interaction.guild.channels.cache.get(logsData.channelId)
                 
                             logsChannel.send({ embeds: [registerPetitionEmbed], files: [attachment] })
                         } else {
@@ -164,6 +165,14 @@ module.exports = {
                         }
 
                         i.reply({ content: "La petición ha sido aceptada correctamente! El canal se eliminará en 10 segundos...", ephemeral: true })
+
+                        let approvedLogsChannel;
+                        let approvedData = await whitelistApprovedModel.findOne({ guildId: interaction.member.guild.id })
+                        if (approvedData) {
+                            approvedLogsChannel = await interaction.guild.channels.cache.get(approvedData.channelId)
+                
+                            approvedLogsChannel.send({ content: `Felicidades <@${interaction.member.id}>, has aprobado la whitelist. A rolear!` })
+                        }
 
                         channel.edit({ embeds: [petitionOpened_embed], components: [] }).then(() => {
                             collector.stop()
