@@ -67,7 +67,7 @@ module.exports = {
 
         const embed = new MessageEmbed()
             .setTitle(`${member.user.tag} | ${member.user.id}`)
-            .setDescription(`Se ha unido al servidor.\n\nCreación de la cuenta: <t:${Math.floor(member.user.createdTimestamp / 1000)}:f>`)
+            .setDescription(`Se ha unido al servidor.\nCreación de la cuenta: <t:${Math.floor(member.user.createdTimestamp / 1000)}:f>`)
             .setThumbnail(member.displayAvatarURL({ size: 300, dynamic: true, format: "png" }))
             .setTimestamp()
             .setColor("GREEN")
