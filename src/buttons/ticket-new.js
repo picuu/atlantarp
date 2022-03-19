@@ -15,6 +15,9 @@ module.exports = {
         const usuario_roleId = "934149605938065455";
         const everyone_role = interaction.guild.roles.cache.find(role => role.name === "@everyone");
 
+        // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
+        const mods_rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+
         let categoryParent;
 
         if(!interaction.guild.channels.cache.find(channel => channel.name === "TICKETS")) { 
@@ -34,7 +37,18 @@ module.exports = {
                         deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
                     }
                 ]
-            })
+            });
+
+            mods_rolesIds.forEach(async (roleId) => {
+                const role = await interaction.guild.roles.fetch(roleId);
+
+                categoryParent.permissionOverwrites.edit(role, {
+                    VIEW_CHANNEL: true,
+                    SEND_MESSAGES: true,
+                    READ_MESSAGE_HISTORY: true
+                });
+            });
+
         } else {
             categoryParent = interaction.guild.channels.cache.find(channel => channel.name === "TICKETS");
         }
@@ -59,7 +73,17 @@ module.exports = {
             ]
         }).then(async (ticketChannel) => {
 
-            interaction.reply({ content: `Tu ticket se ha creado satisfactoriamente! Ve a <#${ticketChannel.id}>`, ephemeral: true })
+            mods_rolesIds.forEach(async (roleId) => {
+                const role = await interaction.guild.roles.fetch(roleId);
+
+                ticketChannel.permissionOverwrites.edit(role, {
+                    VIEW_CHANNEL: true,
+                    SEND_MESSAGES: true,
+                    READ_MESSAGE_HISTORY: true
+                });
+            });
+
+            interaction.reply({ content: `Tu ticket se ha creado satisfactoriamente! Ve a <#${ticketChannel.id}>`, ephemeral: true });
 
             const ticketCreated_embed = new Discord.MessageEmbed()
             .setTitle("Ticket creado!")

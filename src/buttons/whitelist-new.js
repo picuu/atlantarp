@@ -18,32 +18,46 @@ module.exports = {
         const usuario_roleId = "934149605938065455";
         const everyone_role = interaction.guild.roles.cache.find(role => role.name === "@everyone");
 
+        // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
+        const mods_rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+        const examinador_roleId = "934149605963210829";
+
         let categoryParent;
 
-        if (interaction.channel.parent) {
-            categoryParent = interaction.channel.parent;
+        if(!interaction.guild.channels.cache.find(channel => channel.name === "WHITELIST")) { 
+            categoryParent = await interaction.guild.channels.create(`WHITELIST`, {
+                type: "GUILD_CATEGORY",
+                permissionOverwrites: [
+                    {
+                        id: interaction.user.id,
+                        allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
+                    },
+                    {
+                        id: examinador_roleId,
+                        allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
+                    },
+                    {
+                        id: usuario_roleId,
+                        deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                    },
+                    {
+                        id: everyone_role.id,
+                        deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                    }
+                ]
+            });
+
+            mods_rolesIds.forEach(async (roleId) => {
+                const role = await interaction.guild.roles.fetch(roleId);
+
+                categoryParent.permissionOverwrites.edit(role, {
+                    VIEW_CHANNEL: true,
+                    SEND_MESSAGES: true,
+                    READ_MESSAGE_HISTORY: true
+                });
+            });
         } else {
-            if(!interaction.guild.channels.cache.find(channel => channel.name === "WHITELIST")) { 
-                categoryParent = await interaction.guild.channels.create(`WHITELIST`, {
-                    type: "GUILD_CATEGORY",
-                    permissionOverwrites: [
-                        {
-                            id: interaction.user.id,
-                            allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
-                        },
-                        {
-                            id: usuario_roleId,
-                            deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-                        },
-                        {
-                            id: everyone_role.id,
-                            deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-                        }
-                    ]
-                })
-            } else {
-                categoryParent = interaction.guild.channels.cache.find(channel => channel.name === "WHITELIST");
-            }
+            categoryParent = interaction.guild.channels.cache.find(channel => channel.name === "WHITELIST");
         }
 
         interaction.guild.channels.create(`solicitud-${username}`, {
@@ -52,6 +66,10 @@ module.exports = {
             permissionOverwrites: [
                 {
                     id: interaction.user.id,
+                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
+                },
+                {
+                    id: examinador_roleid,
                     allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"]
                 },
                 {
@@ -64,6 +82,16 @@ module.exports = {
                 }
             ]
         }).then(async (petitionChannel) => {
+
+            rolesIds.forEach(async (roleId) => {
+                const role = await interaction.guild.roles.fetch(roleId);
+
+                petitionChannel.permissionOverwrites.edit(role, {
+                    VIEW_CHANNEL: true,
+                    SEND_MESSAGES: true,
+                    READ_MESSAGE_HISTORY: true
+                });
+            });
 
             interaction.reply({ content: `Tu solicitud se ha creado correctamente! Ve a <#${petitionChannel.id}>`, ephemeral: true })
 
@@ -101,9 +129,7 @@ module.exports = {
 
                 collector.on("collect", async i => {
 
-                    // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
-                    const rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
-                    if (!rolesIds.some(r => i.member.roles.cache.has(r))) return i.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
+                    if (!mods_rolesIds.some(r => i.member.roles.cache.has(r))) return i.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
 
                     if (i.customId === "whitelist-accept") {
                         
