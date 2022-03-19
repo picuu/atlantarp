@@ -13,8 +13,8 @@ module.exports = {
     async run(client, interaction) {
        
         let username = interaction.user.username.toLowerCase().replace(/\W/g, "-").replace(/--/g, "-").replace(/-$/, "");
-        let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.name === `solicitud-${username}`));
-        if (AlreadyCreatedTicket) return interaction.reply({ content: "Ya tienes una solicitud abierta, no puedes abrir otra!", ephemeral: true });
+        let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.topic === `solicitud-${interaction.member.id}`));
+        if (AlreadyCreatedTicket) return interaction.reply({ content: `Ya tienes una solicitud abierta en ${AlreadyCreatedTicket}, no puedes abrir otra!`, ephemeral: true });
 
         const usuario_roleId = "934149605938065455";
         const everyone_role = interaction.guild.roles.cache.find(role => role.name === "@everyone");
@@ -64,6 +64,7 @@ module.exports = {
         interaction.guild.channels.create(`solicitud-${username}`, {
             type: "GUILD_TEXT",
             parent: categoryParent.id,
+            topic: `solicitud-${interaction.member.id}`,
             permissionOverwrites: [
                 {
                     id: interaction.user.id,
