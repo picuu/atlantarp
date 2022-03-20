@@ -98,13 +98,18 @@ module.exports = {
             interaction.reply({ content: `Tu solicitud se ha creado correctamente! Ve a <#${petitionChannel.id}>`, ephemeral: true })
 
             const petitionOpened_embed = new Discord.MessageEmbed()
-            .setTitle("Solicitud creada!")
+            .setTitle("Solicitud creada! 📥")
             .setDescription(
-                `Envia un mensaje rellenando los siguientes campos:\n` +
-                `\`\`\`Nombre de tu personaje\nFecha de nacimiento\nOrigen del personaje\nTrabajos o empleos que ha tenido o aspire a tener\nExpectativas con las que tu personaje viene/vuelve a la ciudad de Los Santos\nDetalla la mentalidad y personalidad de tu personaje\nHistoria del personaje\`\`\`` +
-                `\n\n*Un moderador vendrá a revisar tu petición en breves, por favor, se paciente.*`
+                `Para enviar tu historia, envía un **PDF** rellenando el siguiente formulario:\n` +
+                `\`\`\`md\n` +
+                `----- Información OOC -----\n- Nombre y edad OCC: \n- URL de Steam: \n` +
+                `----- Historia PJ -----\n- Nombre: \n- Apellido: \n- Fecha de nacimiento: \n- Procedencia: \n- Profesión/formación: \n- Historial médico: \n` +
+                `- Clase social: \n- Apariencia física: \n- Personalidad: \n- Intereses: \n- Aversiones: \n- Fortalezas: \n- Debilidades: \n- Objetivos: \n- Historia: \n` +
+                `\`\`\`\n` +
+                `**La historia debe estar bien detallada, sin un gran salto temporal, para de esta forma conocer bien el pasado del personaje y poder predecir como sería su futuro en el servidor.**\n`
             )
             .setColor(config.colorlessEmbed)
+            .setFooter({ text: `Un moderador vendrá a revisar tu petición en breves, por favor, se paciente.`})
 
             const petitionButtons = new Discord.MessageActionRow()
                 .addComponents(
