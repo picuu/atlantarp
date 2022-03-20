@@ -111,19 +111,19 @@ module.exports = {
                             },
                             {
                                 label: "Donaciones",
-                                description: "Pide ayuda sobre un tema relacionado con donaciones",
+                                description: "Pide ayuda sobre las donaciones",
                                 value: "donaciones",
                                 emoji: "💸"
                             },
                             {
                                 label: "Reportes",
-                                description: "Pide ayuda sobre un tema relacionado con reportes, o reporta a algun usuario",
+                                description: "Pide ayuda sobre los reportes, o reporta a un usuario",
                                 value: "reportes",
                                 emoji: "⛔"
                             },
                             {
                                 label: "Sistema ilícito",
-                                description: "Avisa sobre un sistema ilícito",
+                                description: "Presenta tu sistema ilícito",
                                 value: "sist-ilicito",
                                 emoji: "🔪"
                             },
