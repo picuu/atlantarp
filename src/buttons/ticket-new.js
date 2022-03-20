@@ -149,9 +149,10 @@ module.exports = {
     
                 collector.on("collect", async i => {
     
+                    const ticketCategory = i.values[0];
                     let category;
     
-                    switch (i.values[0]) {
+                    switch (ticketCategory) {
                         case "soporte":
                             category = "Soporte"
                             break
@@ -170,9 +171,13 @@ module.exports = {
                         case "comercio":
                             category = "Comercio"
                             break
-                        default:
+                        case "otros":
                             category = "Otros"
+                            break;
                     }
+                    
+                    if (ticketCategory !== "otros")
+                    i.channel.setName(`${ticketCategory}-${username}`);
                     
                     const ticket_embed = new Discord.MessageEmbed()
                     .setTitle("Ticket creado!")
