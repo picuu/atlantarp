@@ -1,4 +1,4 @@
-module.exports = async (client, interaction) => {
+module.exports = async (client, interaction, webhookClient) => {
 
     // const commandName = interaction.message.interaction.commandName
     const selectMenuId = interaction.customId
@@ -7,7 +7,7 @@ module.exports = async (client, interaction) => {
     if (!selectMenu) return;
 
     try {
-        await selectMenu.run(client, interaction)
+        await selectMenu.run(client, interaction, webhookClient)
     } catch (err) {
         console.error(err)
         return interaction.reply({ content: "Ha ocurrido un error al ejecutar el comando.", ephemeral: true })
