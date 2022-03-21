@@ -215,7 +215,8 @@ module.exports = {
                             const sistIlicitoEmbed = new Discord.MessageEmbed()
                                 .setDescription(
                                     "Si desea aplicar para PDB (Proyecto De Banda), tendrá que rellenar esta plantilla y enviarla como **PDF**." +
-                                    "\`\`\`md\n- Nombre de la banda: \n- Barrio: \n- Sede: \n- Rangos: \n- Miembros y sus rangos: \n" +
+                                    "\`\`\`md\n----- Información OCC -----\n- Nombres de Discord de los integrantes: \n----- Información BANDA -----\n" +
+                                    "- Nombre de la banda: \n- Barrio: \n- Sede: \n- Rangos: \n- Miembros y sus rangos: \n" +
                                     "- Historia de la banda (Lore), cómo se conocieron y historia individual de cada PJ: \n- Intención de la banda: \n" +
                                     "- Tipo de vestimenta: \n- Vehículos de la banda: \n\`\`\`\n" +
                                     "Cuando envíe el documento con la información, un encargado de facción ilícita le contestará.\n\n" +
