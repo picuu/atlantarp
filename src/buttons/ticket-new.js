@@ -160,7 +160,7 @@ module.exports = {
                             category = "CK/PKT"
                             break
                         case "donaciones":
-                            category = "CK/PKT"
+                            category = "Donaciones"
                             break
                         case "reportes":
                             category = "Reportes"
@@ -207,6 +207,21 @@ module.exports = {
 
                         const soporteRolId = "934149605984174144";
                         msg.channel.send({ content: `<@&${soporteRolId}>`, embeds: [ticket_embed], components: [ticket_buttons] });
+                    }
+
+                    if (ticketCategory === "sist-ilicito") {
+                        const sistIlicitoEmbed = new Discord.MessageEmbed()
+                            .setDescription(
+                                "Si desea aplicar para PDB (Proyecto De Banda), tendrá que rellenar esta plantilla y enviarla como **PDF**." +
+                                "\`\`\`md\n- Nombre de la banda: \n- Barrio: \n- Sede: \n- Rangos: \n- Miembros y sus rangos: \n" +
+                                "- Historia de la banda (Lore), cómo se conocieron y historia individual de cada PJ: \n- Intención de la banda: \n" +
+                                "- Tipo de vestimenta: \n- Vehículos de la banda: \n\`\`\`\n" +
+                                "Cuando envíe el documento con la información, un encargado de facción ilícita le contestará.\n\n" +
+                                "*Recuerde que los miembros deben ser como mínimo 4 y como máximo 12.*"
+                            )
+                            .setColor(config.colorlessEmbed)
+
+                        msg.channel.send({ embeds: [sistIlicitoEmbed] })
                     }
     
                 });
