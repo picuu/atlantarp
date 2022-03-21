@@ -10,7 +10,7 @@ module.exports = {
         
         try {
             
-            let usernameee = interaction.user.username.toLowerCase().replace(/\W/g, "-").replace(/--/g, "-").replace(/-$/, "");
+            let username = interaction.user.username.toLowerCase().replace(/\W/g, "-").replace(/--/g, "-").replace(/-$/, "");
             let AlreadyCreatedTicket = await interaction.guild.channels.cache.find(channel => (channel.topic === `ticket-${interaction.member.id}`));
             if (AlreadyCreatedTicket) return interaction.reply({ content: `Ya tienes un ticket abierto en ${AlreadyCreatedTicket}, no puedes crear otro!`, ephemeral: true });
             
