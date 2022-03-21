@@ -129,7 +129,8 @@ module.exports = {
                     ]
                 );
 
-            await petitionChannel.send({ embeds: [petitionOpened_embed], components: [petitionButtons] }).then((channel) => {
+            const examinadorRoleId = "934149605963210829";
+            await petitionChannel.send({ content: `<@&${examinadorRoleId}>`, embeds: [petitionOpened_embed], components: [petitionButtons] }).then((channel) => {
 
                 // const ifilter = i => i.user.id === interaction.member.id
                 const collector = channel.createMessageComponentCollector({ componentType: "BUTTON" })
