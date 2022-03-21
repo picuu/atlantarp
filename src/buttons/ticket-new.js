@@ -205,8 +205,8 @@ module.exports = {
                     if (msg.deletable) {
                         msg.delete()
 
-                        const soporteRolId = "934149605984174144";
-                        msg.channel.send({ content: `<@&${soporteRolId}>`, embeds: [ticket_embed], components: [ticket_buttons] });
+                        const staffRolId = "934149605963210832";
+                        msg.channel.send({ content: `<@&${staffRolId}>`, embeds: [ticket_embed], components: [ticket_buttons] });
                     }
 
                     if (ticketCategory === "sist-ilicito") {
