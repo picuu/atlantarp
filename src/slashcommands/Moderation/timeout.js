@@ -34,7 +34,7 @@ module.exports = {
             if (!reason) reason = "No se ha proporcionado ningúna razón.";
     
             const embed = new Discord.MessageEmbed()
-                .setColor(config.defaultErrorColor)
+                .setColor(config.colorlessEmbed)
                 .setTitle(`${member.user.tag} muteado!`)
                 .setDescription(`**ID del Usuario:** ${user.id}\n**Duración:** ${time}\n**Razón:** ${reason}`)
                 .setFooter({ text: `Muteado por ${interaction.member.user.tag}`})
@@ -63,8 +63,9 @@ module.exports = {
                 .setDescription(`**Canal del error:** ${interaction.channel.name}\n**ID del canal:** ${interaction.channel.id}\n**Comando:** ${command.name}\n**Usuario:** ${interaction.member.user.tag}\n**ID del usuario:** ${interaction.member.id}\n\n**Error:**\n\`\`\`sh\n${e}\`\`\``)
                 .setColor("RED")
     
-            interaction.reply({ content: "Ha ocurrido un error al ejecutar el comando. Los encargados han sido avisados, gracias por tu comprensión y disculpa las molestias!", ephemeral: true });
+            console.log(e);
             webhookClient.send({ embeds: [errEmbed] });
+            interaction.reply({ content: "Ha ocurrido un error al ejecutar el comando. Los encargados han sido avisados, gracias por tu comprensión y disculpa las molestias!", ephemeral: true });
         }
 
     }

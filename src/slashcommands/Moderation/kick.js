@@ -27,7 +27,7 @@ module.exports = {
             const member = await interaction.guild.members.fetch(user.id)
     
             const embed = new Discord.MessageEmbed()
-                .setColor(config.defaultErrorColor)
+                .setColor(config.colorlessEmbed)
                 .setTitle(`${member.user.tag} expulsado!`)
                 .setDescription(`**ID del Usuario:** ${user.id}\n**Razón:** ${reason ? reason : "No se ha proporcionado ningúna razón."}`)
                 .setFooter({ text: `Expulsado por ${interaction.member.user.tag}` })
