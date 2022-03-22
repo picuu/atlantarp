@@ -42,9 +42,14 @@ client.on("modalSubmit", async (modal) => {
         const messageContent = `${text}`;
 
         if (!imgs) {
-            return modal.channel.send({ content: messageContent })
+            return modal.channel.send({ content: messageContent });
         } else {
-            modal.channel.send({ content: messageContent, files: imgs.split(" ") })
+            if (text) {
+                return modal.channel.send({ content: messageContent, files: imgs.split(" ") });
+            } else {
+                return modal.channel.send({ files: imgs.split(" ") });
+            }
+            
         }
 
     }
