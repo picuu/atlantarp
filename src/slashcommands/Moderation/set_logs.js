@@ -1,10 +1,13 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const Discord = require("discord.js");
 const joinsLogsChannelModel = require("../../models/joinsLogs.js");
 const ticketsLogsChannelModel = require("../../models/ticketsLogs.js");
 const bansLogsChannelModel = require("../../models/bansLogs.js");
 const whitelistModel = require("../../models/whitelistLogs.js");
 const welcomesModel = require("../../models/welcomes.js");
 const whitelistApprovedModel = require("../../models/whitelistApproved.js");
+const checkSuggestionsChModel = require("../../models/checkSuggestionsCh.js");
+const publicSuggestionsChModel = require("../../models/publicSuggestionsCh.js");
 
 module.exports = {
     name: "set_logs",
@@ -22,6 +25,8 @@ module.exports = {
             .addChoice("Whitelist", "whitelist")
             .addChoice("Bienvenidas", "welcomes")
             .addChoice("Aprovados de la Whitelist", "whitelist-approved")
+            .addChoice("Revisión de sugerencias", "check-suggestions")
+            .addChoice("Canal de sugerencias público", "public-suggestions")
             .setRequired(true)),
 
     async run(client, interaction, webhookClient) {
@@ -29,8 +34,8 @@ module.exports = {
         try {
             
             // Roles: Soporte, Soporte+, Moderador, STAFF, Tecnico Discord, Gestion Staff, Co-Fundador, Fundador
-            const mods_rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
-            if (!mods_rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
+            // const mods_rolesIds = ["934149605984174144", "934149605984174145", "934149605984174146", "934149605963210832", "934149605984174149", "934149606013567006", "934149606013567007", "934149606013567008"];
+            // if (!mods_rolesIds.some(r => interaction.member.roles.cache.has(r))) return interaction.reply({ content: `No tienes el rango suficiente para hacer eso!`, ephemeral: true });
     
             // const type = interaction.options.getString("type")
     
@@ -156,6 +161,46 @@ module.exports = {
                     interaction.reply({ content: "El canal se usará para anunciar los usuarios que han **aprobado la whitelist**.", ephemeral: true });
     
                     break;
+
+                case "check-suggestions":
+
+                    let checkSuggestionsChData = await checkSuggestionsChModel.findOne({ guildId: interaction.member.guild.id });
+                    if (!checkSuggestionsChData) {
+                        let newCheckSuggestionsChData = new checkSuggestionsChModel({
+                            guildId: interaction.member.guild.id,
+                            channelId: interaction.channel.id
+                        });
+                        await newCheckSuggestionsChData.save();
+                    } else {
+                        await checkSuggestionsChModel.findOneAndUpdate({
+                            guildId: interaction.member.guild.id,
+                            channelId: interaction.channel.id
+                        });
+                    }
+            
+                    interaction.reply({ content: "El canal se usará para enviar (a revisón) las nuevas **sugerencias** que hagan los usuarios.", ephemeral: true });
+    
+                    break;
+
+                case "public-suggestions":
+
+                    let publicSuggestionsChData = await publicSuggestionsChModel.findOne({ guildId: interaction.member.guild.id });
+                    if (!publicSuggestionsChData) {
+                        let newPublicSuggestionsChData = new publicSuggestionsChModel({
+                            guildId: interaction.member.guild.id,
+                            channelId: interaction.channel.id
+                        });
+                        await newPublicSuggestionsChData.save();
+                    } else {
+                        await publicSuggestionsChModel.findOneAndUpdate({
+                            guildId: interaction.member.guild.id,
+                            channelId: interaction.channel.id
+                        });
+                    }
+            
+                    interaction.reply({ content: "El canal se usará para enviar **sugerencias que hayan sido aceptadas**.", ephemeral: true });
+    
+                    break;
             }
             
         } catch (e) {
@@ -165,8 +210,9 @@ module.exports = {
                 .setDescription(`**Canal del error:** ${interaction.channel.name}\n**ID del canal:** ${interaction.channel.id}\n**Comando:** ${command.name}\n**Usuario:** ${interaction.member.user.tag}\n**ID del usuario:** ${interaction.member.id}\n\n**Error:**\n\`\`\`sh\n${e}\`\`\``)
                 .setColor("RED")
     
-            interaction.reply({ content: "Ha ocurrido un error al ejecutar el comando. Los encargados han sido avisados, gracias por tu comprensión y disculpa las molestias!", ephemeral: true });
+            console.log(e);
             webhookClient.send({ embeds: [errEmbed] });
+            interaction.reply({ content: "Ha ocurrido un error al ejecutar el comando. Los encargados han sido avisados, gracias por tu comprensión y disculpa las molestias!", ephemeral: true });
         }
 
     }
