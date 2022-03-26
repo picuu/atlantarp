@@ -12,6 +12,8 @@ module.exports = {
     
     async execute(client, message) {
         
+        if(message.author.bot) return;
+
         if (message.attachments.first()) {
             const pdfURL = message.attachments.first().url;
             if (pdfURL.substr(pdfURL.length - 3, pdfURL.length) === "pdf") {
