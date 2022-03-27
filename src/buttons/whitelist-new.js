@@ -4,6 +4,7 @@ const whitelistModel = require("../models/whitelistLogs.js");
 const whitelistApprovedModel = require("../models/whitelistApproved.js");
 const { createTranscript } = require("discord-html-transcripts");
 const ms = require("ms");
+const { inlineCode } = require("@discordjs/builders");
 
 module.exports = {
     data: {
@@ -128,6 +129,13 @@ module.exports = {
                                 .setCustomId("whitelist-deny")
                                 .setLabel("Denegar petición")
                                 .setEmoji("❎")
+                        ],
+                        [
+                            new Discord.MessageButton()
+                                .setStyle("SECONDARY")
+                                .setCustomId("whitelist-dismiss")
+                                .setLabel("Descartar solicitud")
+                                .setEmoji("🗑️")
                         ]
                     );
     
@@ -219,6 +227,16 @@ module.exports = {
                             i.reply({ content: "La petición ha sido denegada.", ephemeral: true })
                             i.channel.send({ content: `<@${interaction.member.user.id}>, tu solicitud ha sido rechazada. Corrige los siguientes errores, por favor:` })
     
+                        } else if (i.customId === "whitelist-dismiss") {
+                            
+                            if (i.channel.deletable) {
+                                interaction.reply("Borrando solicitud...");
+                                collector.stop();
+                                setTimeout(() => {
+                                    i.channel.delete();
+                                }, ms("5s"))
+                            }
+
                         }
         
                     });
