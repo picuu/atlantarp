@@ -25,8 +25,9 @@ module.exports = {
             const user = interaction.options.getUser("usuario");
             const reason = interaction.options.getString("razon");
     
-            const member = await interaction.guild.members.fetch(user.id)
-    
+            const member = await interaction.guild.members.fetch(user.id);
+            if (!member) return interaction.reply({ content: "No consigo encontrar a este usuario, no lo voy a poder banear...", ephemeral: true });
+
             const embed = new Discord.MessageEmbed()
                 .setColor(config.colorlessEmbed)
                 .setTitle(`${member.user.tag} baneado!`)
