@@ -230,7 +230,7 @@ module.exports = {
                         } else if (i.customId === "whitelist-dismiss") {
                             
                             if (i.channel.deletable) {
-                                interaction.reply("Borrando solicitud...");
+                                i.reply("Borrando solicitud...");
                                 collector.stop();
                                 setTimeout(() => {
                                     i.channel.delete();
@@ -252,8 +252,9 @@ module.exports = {
                 .setDescription(`**Canal del error:** ${interaction.channel.name}\n**ID del canal:** ${interaction.channel.id}\n**Comando (button):** ${button.data.name}\n**Usuario:** ${interaction.member.user.tag}\n**ID del usuario:** ${interaction.member.id}\n\n**Error:**\n\`\`\`sh\n${e}\`\`\``)
                 .setColor("RED")
     
-            interaction.reply({ content: "Ha ocurrido un error al ejecutar el botón. Los encargados han sido avisados, gracias por tu comprensión y disculpa las molestias!", ephemeral: true });
+            console.log(e);
             webhookClient.send({ embeds: [errEmbed] });
+            interaction.reply({ content: "Ha ocurrido un error al ejecutar el botón. Los encargados han sido avisados, gracias por tu comprensión y disculpa las molestias!", ephemeral: true });
         }
 
     }
